@@ -2,6 +2,5 @@
 """rectangle """
 
 class Square:
-"""innit """
-    def __init__(self):
+    def square(self):
         pass
