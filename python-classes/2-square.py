@@ -2,13 +2,15 @@
 """Define a class Square."""
 
 class Square:
-    """Represent a square."""
+    '''Class Square object intialized with size
+    '''
+    pass
 
     def __init__(self, size=0):
-        try:
-            size = int(size)
-            if size < 0:
-                raise ValueError("size must be >= 0")
-            self.__size = size
-        except TypeError:
-            print("size must be an integer")
+        '''init method of class Square
+        '''
+        if type(size) != int:
+            raise TypeError("size must be an integer")
+        if size < 0:
+            raise ValueError("size must be >= 0")
+        self.__size = size
