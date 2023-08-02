@@ -1,33 +1,32 @@
 #!/usr/bin/python3
-"""
-7-model_state_fetch_all.py
-"""
+""" Importing """
 import sys
 from model_state import Base, State
-from sqlalchemy import create_engine
+from sqlalchemy import (create_engine)
 from sqlalchemy.orm import sessionmaker
+""" 8-model_state_fetch_first.py """
 
 
-def init_sess():
-    """initializes session and engine for sqlalchemy DB instance"""
-    engine = create_engine('mysql+mysqldb://{}:{}@localhost:3306/{}'
-                           .format(sys.argv[1], sys.argv[2], sys.argv[3]))
+def listStateObj():
+    """
+    Class that lists only the first states in the given database
+    using SQLALchemy. If the database is empty, print 'Nothing'
+    """
+    engine = create_engine('mysql+mysqldb://{}:{}@localhost:3306/{}'.
+                           format(sys.argv[1], sys.argv[2], sys.argv[3]),
+                           pool_pre_ping=True)
+
+    Base.metadata.create_all(engine)
     Session = sessionmaker(bind=engine)
-    session = Session()
-    return (engine, session)
+    my_session = Session()
 
-
-def print_min_state(db):
-    """prints the state with min value using first()"""
-    session = db[1]
-    instance = session.query(State).first()
-    try:
-        print(instance.id, ': ', instance.name, sep='')
-    except:
+    first_state = my_session.query(State).first()
+    if first_state is None:
         print("Nothing")
-    session.close()
-    db[0].dispose()
+    else:
+        print("{}: {}".format(first_state.id, first_state.name))
 
+    my_session.close()
 
 if __name__ == '__main__':
-    print_min_state(init_sess())
+    listStateObj()
