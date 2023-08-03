@@ -1,39 +1,27 @@
-#!/usr/bin/env python3
-import sys
+#!/usr/bin/python3
+'''
+a script that lists all State objects
+from the database hbtn_0e_6_usa
+'''
+
+
+from sys import argv
 from sqlalchemy import create_engine
+from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import sessionmaker
 from model_state import Base, State
 
-def main():
-    if len(sys.argv) != 5:
-        print("Usage: ./10-model_state_my_get.py <mysql_username> <mysql_password> <database_name> <state_name>")
-        return
-
-    # Retrieve command-line arguments
-    mysql_username = sys.argv[1]
-    mysql_password = sys.argv[2]
-    database_name = sys.argv[3]
-    state_name = sys.argv[4]
-
-    # Create connection to MySQL server
-    engine = create_engine(f'mysql+mysqldb://{mysql_username}:{mysql_password}@localhost:3306/{database_name}')
-
-    # Create a session to interact with the database
+if __name__ == "__main__":
+    engine = create_engine(
+            'mysql+mysqldb://{}:{}@localhost/{}'.format(argv[1],
+                                                        argv[2],
+                                                        argv[3]))
+    Base.metadata.create_all(engine)
     Session = sessionmaker(bind=engine)
     session = Session()
-
-    # Query the State object with the given state name
-    result = session.query(State).filter_by(name=state_name).first()
-
-    # Check if a state with the given name was found
-    if result:
-        print(result.id)
+    state = session.query(State).filter_by(name=argv[4]).first()
+    if state is not None:
+            print(str(state.id))
     else:
         print("Not found")
-
-    # Close the session
     session.close()
-
-if __name__ == "__main__":
-    main()
-
